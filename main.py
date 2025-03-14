@@ -3,7 +3,6 @@ import requests
 import os
 import time
 import shutil
-import platform
 import asyncio
 import ast
 from pathlib import Path
@@ -13,13 +12,18 @@ from bs4 import BeautifulSoup
 import json
 from threading import Event
 
-try:
+def is_android():
+    """Verifica si la app corre en Android."""
+    try:
+        import android
+        return True
+    except ImportError:
+        return False
+    
+if is_android():
     import android
     from android.permissions import request_permissions, Permission
     from android.storage import primary_external_storage_path
-
-except ImportError:
-    android = None
 
 headers = {"User-Agent":"Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:109.0) Gecko/20100101 Firefox/115.0"}
 
@@ -90,51 +94,54 @@ class Downloader:
         self.downloading = False 
         self.max_retries = 5
 
-        # UI
-        self.status_label = ft.Text("Estado de descarga", size=14, text_align=ft.TextAlign.CENTER)
-        self.url_input = ft.TextField(hint_text="URL de Descarga", expand=True)
-        self.pause_button = ft.ElevatedButton("Pausar", on_click=self.pause_download, disabled=True)
-        self.resume_button = ft.ElevatedButton("Reanudar", on_click=self.resume_download, disabled=True)
-        self.progress_bar = ft.ProgressBar(value=0, width=150)
-        self.progress_text = ft.Text("0 MB / 0 MB (0.0%)", size=12)
-        self.download_list = ft.Column(scroll=ft.ScrollMode.ALWAYS, expand=True)
+        self.setup_ui()
+        self.page.run_task(self.start_download)
+        if is_android():
+            self.request_android_permissions()
 
-        # Estructura de la interfaz
+    def setup_ui(self):
+        self.page.theme_mode = ft.ThemeMode.DARK
+        self.page.bgcolor = ft.Colors.GREY_900
+        
+        self.status_label = ft.Text("Estado de descarga", size=14, text_align=ft.TextAlign.CENTER)
+        self.url_input = ft.TextField(hint_text="Introduce la URL", expand=True, bgcolor=ft.Colors.GREY, border_radius=10)
+        self.pause_button = ft.IconButton(ft.Icons.PAUSE, on_click=self.pause_download, disabled=True, icon_color=ft.Colors.YELLOW)
+        self.resume_button = ft.IconButton(ft.Icons.PLAY_ARROW, on_click=self.resume_download, disabled=True, icon_color=ft.Colors.GREEN)
+        self.progress_bar = ft.ProgressBar(value=0, width=200, bgcolor=ft.Colors.GREY)
+        self.progress_text = ft.Text("0 MB / 0 MB (0.0%)", size=12, color=ft.Colors.WHITE)
+        self.download_list = ft.Column(scroll=ft.ScrollMode.AUTO, expand=True)
+
         self.page.add(
             ft.Column([
                 ft.Container(
-                    content=ft.Text("📥 Down Free", size=22, weight=ft.FontWeight.BOLD, text_align=ft.TextAlign.CENTER),
-                    bgcolor=ft.Colors.BLUE_GREY_900,
-                    padding=10,
-                    border_radius=10
+                    content=ft.Text("📥 Down Free", size=20, weight=ft.FontWeight.BOLD, text_align=ft.TextAlign.CENTER, color=ft.Colors.CYAN_ACCENT),
+                    bgcolor=ft.Colors.BLUE_GREY,
+                    padding=15,
+                    border_radius=12,
+                    alignment=ft.alignment.center
                 ),
                 ft.Row([
                     self.url_input,
-                    ft.IconButton(ft.Icons.DOWNLOAD, on_click=self.queue_download)
+                    ft.IconButton(ft.Icons.DOWNLOAD, on_click=self.queue_download, icon_color=ft.Colors.CYAN_ACCENT)
                 ], spacing=10, alignment=ft.MainAxisAlignment.CENTER),
                 ft.Row([
                     self.pause_button,
                     self.resume_button
                 ], spacing=10, alignment=ft.MainAxisAlignment.CENTER),
-                ft.Column([
-                    self.progress_bar,
-                    self.progress_text
-                ], alignment=ft.MainAxisAlignment.CENTER),
+                ft.Container(
+                    content=ft.Column([
+                        self.progress_bar,
+                        self.progress_text
+                    ], alignment=ft.MainAxisAlignment.CENTER),
+                    padding=10,
+                    border_radius=10,
+                    bgcolor=ft.Colors.GREY
+                ),
                 self.status_label,
                 ft.Container(content=self.download_list, expand=True)
             ], spacing=15, expand=True, alignment=ft.MainAxisAlignment.CENTER)
         )
-
         self.page.update()
-        self.page.run_task(self.start_download)
-
-        if self.is_android():
-            self.request_android_permissions()
-            self.page.run_task(self.request_ignore_battery_optimizations)
-
-    def is_android(self):
-        """Detecta si la aplicación se ejecuta en Android."""
-        return android is not None and platform.system() == "Linux"
 
     def mostrar_mensaje(self, mensaje):
         """Muestra un mensaje tipo SnackBar en Flet."""
@@ -156,23 +163,6 @@ class Downloader:
             self.mostrar_mensaje("✅ Permisos otorgados")
         else:
             self.mostrar_mensaje("❌ Permisos no otorgados")
-
-    async def request_ignore_battery_optimizations(self):
-        """Solicita que la app se excluya de optimización de batería en Android."""
-        if self.is_android():
-            try:
-                context = PythonActivity.mActivity
-                package_name = context.getPackageName()
-                pm = context.getSystemService(Context.POWER_SERVICE)
-
-                if not pm.isIgnoringBatteryOptimizations(package_name):
-                    intent = Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS)
-                    intent.setData(Uri.parse(f"package:{package_name}"))
-                    context.startActivity(intent)
-
-                self.mostrar_mensaje("⚡ Solicitud de optimización de batería enviada")
-            except Exception as e:
-                self.mostrar_mensaje(f"⚠ Error: {str(e)}")
 
     async def queue_download(self, e):    # 🔹 'e' es el evento, no la URL
         url_text = self.url_input.value.strip()  # 📌 Obtiene el texto de la entrada
@@ -232,7 +222,7 @@ class Downloader:
                 filet = filename[:20] + "." + filename[-5:]
             
             # Ruta de descarga
-            if android:
+            if is_android():
                 download_path = os.path.join(primary_external_storage_path(), "Download", filename)
             else:
                 download_path = os.path.join(str(Path.home()), "Downloads", filename)
@@ -326,16 +316,6 @@ class Downloader:
                 self.mostrar_error("Faltaron partes del archivo por descargar. Verifica la conexión y reintenta.")
 
             self._replace_bytes_if_needed(dl, download_path)
-
-            if android:
-                try:
-                    destination_file = os.path.join(primary_external_storage_path(), "Download", filename)
-                    if os.path.exists(destination_file):
-                        os.unlink(destination_file)
-                    shutil.move(download_path, destination_file)
-                    print("Archivo guardado en la carpeta Download")
-                except Exception as ex:
-                    print(f"Archivo guardado en {str(download_path)}")
 
             self.complete_download(filet)
 
