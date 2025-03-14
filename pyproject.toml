@@ -1,0 +1,39 @@
+[project]
+
+name = "XLink"
+version = "1.0.4"
+description = "App para la descarga de archivos"
+authors = [
+  {name = "KeimaSenpai", email = "KeimaSenpai@proton.me"}
+]
+dependencies = ["flet==0.26.0", "requests", "yarl", "bs4", "pysocks"]
+
+
+[tool.flet]
+org = "by.bytebloom" # --org
+product = "XLink" # --product
+company = "ByteBloom" # --company
+copyright = "Copyright (C) 2025 by ByteBloom" # --copyright
+build_number = 2 # --build-number
+flutter.dependencies = ["flet_permission_handler"]
+
+
+[tool.flet.android.permission] # --android-permissions
+"android.permission.READ_EXTERNAL_STORAGE" = true
+"android.permission.BACKGROUND_REFRESH" = true
+"android.permission.IGNORE_BATTERY_OPTIMIZATIONS" = true
+"android.permission.MANAGE_EXTERNAL_STORAGE" = true
+"android.permission.MEDIA_LIBRARY" = true
+"android.permission.STORAGE" = true
+"android.permission.INTERNET" = true
+
+[tool.flet.ios.info] # --info-plist
+NSLocationWhenInUseUsageDescription = "This app uses location service when in use."
+
+[tool.flet.android.signing]
+# store and key passwords can be passed with `--android-signing-key-store-password`
+# and `--android-signing-key-password` options or
+# FLET_ANDROID_SIGNING_KEY_STORE_PASSWORD
+# and FLET_ANDROID_SIGNING_KEY_PASSWORD environment variables.
+key_store = "build/bytebloom.jks" # --android-signing-key-store
+key_alias = "upload"
