@@ -17,16 +17,6 @@ try:
     import android
     from android.permissions import request_permissions, Permission
     from android.storage import primary_external_storage_path
-    from jnius import autoclass
-
-    Intent = autoclass('android.content.Intent')
-    Settings = autoclass('android.provider.Settings')
-    Uri = autoclass('android.net.Uri')
-    Environment = autoclass('android.os.Environment')
-    File = autoclass('java.io.File')
-    PythonActivity = autoclass('org.kivy.android.PythonActivity')
-    PowerManager = autoclass('android.os.PowerManager')
-    Context = autoclass('android.content.Context')
 
 except ImportError:
     android = None
