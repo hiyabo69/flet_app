@@ -6,3 +6,4 @@ pysocks
 asyncio
 mysql-connector
 jnius
+Cython==0.29.33
