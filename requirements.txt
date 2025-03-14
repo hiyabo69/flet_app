@@ -5,4 +5,4 @@ bs4
 pysocks
 asyncio
 mysql-connector-python
-hiyabocut==1.0.2
+hiyabocut==1.0.3
