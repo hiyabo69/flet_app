@@ -4,6 +4,5 @@ yarl
 bs4
 pysocks
 asyncio
-ast
 mysql-connector
 jnius
