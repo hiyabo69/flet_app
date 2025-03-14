@@ -4,4 +4,4 @@ yarl
 bs4
 pysocks
 asyncio
-mysql-connector
+mysql-connector-python
