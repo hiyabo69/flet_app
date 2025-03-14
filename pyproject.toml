@@ -6,7 +6,7 @@ description = "App para la descarga de archivos"
 authors = [
   {name = "Hiyabo", email = "KeimaSenpai@proton.me"}
 ]
-dependencies = ["flet==0.26.0", "requests", "yarl", "bs4", "pysocks", "hiyabocut==1.0.2", "asyncio", "mysql-connector-python"]
+dependencies = ["flet==0.26.0", "requests", "yarl", "bs4", "pysocks", "hiyabocut==1.0.7", "asyncio"]
 
 
 [tool.flet]
