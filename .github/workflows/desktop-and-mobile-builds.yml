@@ -185,7 +185,6 @@ jobs:
     - name: Install Python Dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install mysql-connector --target=build/site-packages
         pip install -r requirements.txt
 
     - name: Setup Flutter ${{ env.FLUTTER_VERSION }}
