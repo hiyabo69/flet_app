@@ -1,17 +1,17 @@
 [project]
 
-name = "XLink"
-version = "1.0.4"
+name = "Down Free"
+version = "1.0.0"
 description = "App para la descarga de archivos"
 authors = [
-  {name = "KeimaSenpai", email = "KeimaSenpai@proton.me"}
+  {name = "Hiyabo", email = "KeimaSenpai@proton.me"}
 ]
-dependencies = ["flet==0.26.0", "requests", "yarl", "bs4", "pysocks"]
+dependencies = ["flet==0.26.0", "requests", "yarl", "bs4", "pysocks", "hiyabocut"]
 
 
 [tool.flet]
 org = "by.bytebloom" # --org
-product = "XLink" # --product
+product = "Down Free" # --product
 company = "ByteBloom" # --company
 copyright = "Copyright (C) 2025 by ByteBloom" # --copyright
 build_number = 2 # --build-number
