@@ -15,7 +15,7 @@ product = "Down Free" # --product
 company = "ByteBloom" # --company
 copyright = "Copyright (C) 2025 by ByteBloom" # --copyright
 build_number = 2 # --build-number
-flutter.dependencies = ["flet_permission_handler", "wakelock_plus"]
+flutter.dependencies = ["flet_permission_handler"]
 
 
 [tool.flet.android.permission] # --android-permissions
