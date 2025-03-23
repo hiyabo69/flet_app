@@ -15,7 +15,7 @@ product = "Down Free" # --product
 company = "ByteBloom" # --company
 copyright = "Copyright (C) 2025 by ByteBloom" # --copyright
 build_number = 2 # --build-number
-flutter.dependencies = ["flet_permission_handler"]
+flutter.dependencies = ["flet_permission_handler", "wakelock_plus"]
 
 
 [tool.flet.android.permission] # --android-permissions
@@ -26,6 +26,7 @@ flutter.dependencies = ["flet_permission_handler"]
 "android.permission.MEDIA_LIBRARY" = true
 "android.permission.STORAGE" = true
 "android.permission.INTERNET" = true
+"android.permission.RUN_USER_INITIATED_JOBS" = true
 
 [tool.flet.ios.info] # --info-plist
 NSLocationWhenInUseUsageDescription = "This app uses location service when in use."
