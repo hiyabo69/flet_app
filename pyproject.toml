@@ -6,7 +6,7 @@ description = "App para la descarga de archivos"
 authors = [
   {name = "Hiyabo", email = "KeimaSenpai@proton.me"}
 ]
-dependencies = ["flet==0.26.0", "requests", "yarl", "bs4", "pysocks", "hiyabocut==1.0.7", "asyncio"]
+dependencies = ["flet==0.26.0", "aiohttp", "yarl", "bs4", "pysocks", "hiyabocut==1.0.7", "asyncio", "flet-geolocator", "flet-permission-handler"]
 
 
 [tool.flet]
@@ -16,7 +16,9 @@ company = "ByteBloom" # --company
 copyright = "Copyright (C) 2025 by ByteBloom" # --copyright
 build_number = 2 # --build-number
 flutter.dependencies = ["flet_permission_handler"]
-
+flutter.categories = ["android.intent.category.LAUNCHER", "android.intent.category.APP"]
+flutter.background_mode = "foreground"
+icon = "icon.png"
 
 [tool.flet.android.permission] # --android-permissions
 "android.permission.READ_EXTERNAL_STORAGE" = true
